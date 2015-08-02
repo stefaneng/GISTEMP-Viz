@@ -4,9 +4,20 @@
 body { font: 12px Arial;}
 
 path {
-    stroke: steelblue;
     stroke-width: 2;
     fill: none;
+}
+
+.glob {
+   stroke: #1f77b4;
+}
+
+.nhem path {
+   stroke: #FF7F0E;
+}
+
+.shem path {
+   stroke: #2ca04e;
 }
 
 .axis path,
@@ -25,20 +36,14 @@ path {
 
    // Set the dimensions of the canvas / graph
    var margin = {top: 30, right: 20, bottom: 30, left: 50},
-   width = 600 - margin.left - margin.right,
-   height = 270 - margin.top - margin.bottom;
+   width = 800 - margin.left - margin.right,
+   height = 400 - margin.top - margin.bottom;
+
+   var parseYear = d3.time.format("%Y").parse;
 
    // Set the ranges
-   var x = d3.scale.linear().range([0, width]);
+   var x = d3.time.scale().range([0, width]);
    var y = d3.scale.linear().range([height, 0]);
-   var data = [
-     { x: 1, y: 10 },
-     { x: 2, y: 15 },
-     { x: 3, y: -10 },
-     { x: 4, y: 7 },
-     { x: 5, y: 21 },
-     { x: 6, y: -1 }
-   ];
 
    // Define the axes
    var xAxis = d3.svg.axis().scale(x)
@@ -48,8 +53,8 @@ path {
                      .orient("left").ticks(5);
 
    var valueline = d3.svg.line()
-    .x(function(d) { return x(d.x); })
-    .y(function(d) { return y(d.y); });
+    .x(function(d) { return x(d.Year); })
+    .y(function(d) { return y(d.Glob); });
 
    // Adds the svg canvas
    var svg = d3.select("body")
@@ -60,24 +65,32 @@ path {
                .attr("transform",
                      "translate(" + margin.left + "," + margin.top + ")");
 
-   // Scale the range of the data
-   x.domain(d3.extent(data, function(d) { return d.x; }));
-   y.domain(d3.extent(data, function(d) { return d.y; }));
+   d3.csv("data/GISTEMPData.csv", function(error, data) {
+     // Process data
+     data.forEach(function(d) {
+       d.Year = parseYear(d.Year);
+       d.Glob = +d.Glob;
+     });
 
-   // Add the X Axis
-   svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+     // Scale the range of the data
+     x.domain(d3.extent(data, function(d) { return d.Year; }));
+     y.domain(d3.extent(data, function(d) { return d.Glob; }));
 
-   // Add the Y Axis
-   svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis);
+     // Add the X Axis
+     svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
 
-   // Add the valueline path.
-   svg.append("path")
-      .attr("class", "line")
-      .attr("d", valueline(data));
+     // Add the Y Axis
+     svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+     // Add the valueline path.
+     svg.append("path")
+        .attr("class", "glob")
+        .attr("d", valueline(data));
+   });
   </script>
 </body>
