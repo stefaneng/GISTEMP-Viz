@@ -12,11 +12,11 @@ path {
    stroke: #1f77b4;
 }
 
-.nhem path {
+.nhem {
    stroke: #FF7F0E;
 }
 
-.shem path {
+.shem {
    stroke: #2ca04e;
 }
 
@@ -27,6 +27,10 @@ path {
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
+
+.axis-label {
+   font-size: 16px;
+}
 </style>
 <body>
 
@@ -34,8 +38,8 @@ path {
 
   <script>
 
-   // Set the dimensions of the canvas / graph
-   var margin = {top: 30, right: 20, bottom: 30, left: 50},
+   // Set the dimensions of the canvas / graph   
+   var margin = {top: 30, right: 20, bottom: 50, left: 50},
    width = 800 - margin.left - margin.right,
    height = 400 - margin.top - margin.bottom;
 
@@ -47,14 +51,14 @@ path {
 
    // Define the axes
    var xAxis = d3.svg.axis().scale(x)
-                     .orient("bottom").ticks(5);
+                     .orient("bottom").ticks(20);
 
    var yAxis = d3.svg.axis().scale(y)
-                     .orient("left").ticks(5);
+                     .orient("left").ticks(10);
 
    var valueline = d3.svg.line()
-    .x(function(d) { return x(d.Year); })
-    .y(function(d) { return y(d.Glob); });
+    .x(function(d) { return x(d.year); })
+    .y(function(d) { return y(d.value); });
 
    // Adds the svg canvas
    var svg = d3.select("body")
@@ -67,14 +71,30 @@ path {
 
    d3.csv("data/GISTEMPData.csv", function(error, data) {
      // Process data
+     var glob_data = [];
+     var nhem_data = [];
+     var shem_data = [];
      data.forEach(function(d) {
-       d.Year = parseYear(d.Year);
-       d.Glob = +d.Glob;
+       glob_data.push({
+         year:  parseYear(d.Year),
+         value: +d.Glob
+       });
+
+       nhem_data.push({
+         year:  parseYear(d.Year),
+         value: +d.NHem
+       });
+
+       shem_data.push({
+         year:  parseYear(d.Year),
+         value: +d.SHem
+       });
      });
 
+     var concat_data = glob_data.concat(nhem_data, shem_data)
      // Scale the range of the data
-     x.domain(d3.extent(data, function(d) { return d.Year; }));
-     y.domain(d3.extent(data, function(d) { return d.Glob; }));
+     x.domain(d3.extent(concat_data, function(d) { return d.year; }));
+     y.domain(d3.extent(concat_data, function(d) { return d.value; }));
 
      // Add the X Axis
      svg.append("g")
@@ -82,15 +102,43 @@ path {
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
 
+     // X Label
+     svg.append("text")
+        .attr("class", "axis-label")
+        .attr("text-anchor", "end")
+        .attr("x", width / 2)
+        .attr("y", height + margin.bottom)
+        .text("Year");
+
      // Add the Y Axis
      svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
 
-     // Add the valueline path.
+     // Y Label
+     svg.append("text")
+        .attr("class", "axis-label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Mean Temperature");
+
+     // Add the valueline path for global mean
      svg.append("path")
         .attr("class", "glob")
-        .attr("d", valueline(data));
+        .attr("d", valueline(glob_data));
+
+     // Add the valueline path for northern hemisphere mean
+     svg.append("path")
+        .attr("class", "nhem")
+        .attr("d", valueline(nhem_data));
+
+     // Add the valueline path for southern hemisphere mean
+     svg.append("path")
+        .attr("class", "shem")
+        .attr("d", valueline(shem_data));
    });
   </script>
 </body>
