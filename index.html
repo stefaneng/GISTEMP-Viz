@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <meta charset="utf-8">
 <style>
 body { font: 12px Arial;}
@@ -40,6 +41,12 @@ g {
   pointer-events: all;
 }
 
+svg {
+   margin-left:auto;
+   margin-right:auto;
+   display:block;
+}
+
 .axis path,
 .axis line {
     fill: none;
@@ -53,6 +60,9 @@ g {
 }
 </style>
 <body>
+  <center>
+  <h1>GISTEMP Visualization</h1>
+  </center>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 
@@ -248,3 +258,4 @@ g {
    });
   </script>
 </body>
+</html>
