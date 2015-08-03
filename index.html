@@ -80,7 +80,7 @@ svg {
     <div class="info">
       <h1>GISTEMP Visualization</h1>
       <p>
-        This data comes from the <a href="http://data.giss.nasa.gov/gistemp/">GISS Surface Temperature Analysis</a> The X Axis is the Year, and the Y Axis is the Mean Temperature. Only the data on the overall surface temperature and both of the hemispheres were used. Mouseover the legend to view only that value. From this data we can see a clear increasing trend of mean temperature over time.
+        This data comes from the <a href="http://data.giss.nasa.gov/gistemp/">GISS Surface Temperature Analysis</a> The X Axis is the Year, and the Y Axis is the Deviation from Mean Temperature. Only the data on the overall surface temperature and both of the hemispheres were used. Mouseover the legend to view only that value. From this data we can see a clear increasing trend of mean temperature over time.
       </p>
   </center>
 
@@ -199,7 +199,7 @@ svg {
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Mean Temperature");
+        .text("Deviation from Mean Temperature");
 
      // Add the valueline path for global mean
      svg.append("path")
@@ -212,7 +212,7 @@ svg {
         .attr("text-anchor", "middle")
         .attr("x", width / 2)
         .attr("y", 0)
-        .text("Mean Temperature by Hemisphere");
+        .text("Deviation from Mean by Hemisphere");
 
      // Add the valueline path for northern hemisphere mean
      svg.append("path")
@@ -230,7 +230,7 @@ svg {
                      .attr("transform", "translate(20,20)")
 
      // How far away circles are in legend
-     var circle_spacing = 200;
+     var circle_spacing = 210;
 
      var glob_legend = legend.append("g")
                              .on("mouseover", mouseLegendGlob)
@@ -239,7 +239,7 @@ svg {
      glob_legend.append("text")
                 .attr("x", 0)
                 .attr("y", 0)
-                .text("Global Mean");
+                .text("Global Deviation from Mean");
 
      glob_legend.append("circle")
                 .attr("class", "glob-legend legend")
@@ -253,7 +253,7 @@ svg {
                              .on("mouseout", mouseLegendOut);
 
      shem_legend.append("text")
-                .text("Southern Hemisphere Mean");
+                .text("Southern Hemisphere Deviation");
 
      shem_legend.append("circle")
                 .attr("class", "shem-legend legend")
@@ -267,7 +267,7 @@ svg {
                              .on("mouseout", mouseLegendOut);
 
      nhem_legend.append("text")
-           .text("Northern Hemisphere Mean");
+           .text("Northern Hemisphere Deviation");
 
      nhem_legend.append("circle")
                 .attr("class", "nhem-legend legend")
