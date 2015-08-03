@@ -28,8 +28,16 @@ path {
    stroke: #2ca04e;
 }
 
+.light-gray {
+   stroke: #b3b3b3;
+}
+
 .shem-legend {
    fill: #2ca04e;
+}
+
+g {
+  pointer-events: all;
 }
 
 .axis path,
@@ -80,6 +88,32 @@ path {
                .append("g")
                .attr("transform",
                      "translate(" + margin.left + "," + margin.top + ")");
+
+   var mouseLegendGlob = function(d) {
+     d3.select(".nhem")
+       .classed("light-gray", true);
+     d3.select(".shem")
+       .classed("light-gray", true);
+   };
+
+   var mouseLegendNHem = function(d) {
+     d3.select(".glob")
+       .classed("light-gray", true);
+     d3.select(".shem")
+       .classed("light-gray", true);
+   };
+
+   var mouseLegendSHem = function(d) {
+     d3.select(".glob")
+       .classed("light-gray", true);
+     d3.select(".nhem")
+       .classed("light-gray", true);
+   };
+
+   var mouseLegendOut = function(d) {
+     d3.selectAll("path")
+       .classed("light-gray", false);
+   };
 
    d3.csv("data/GISTEMPData.csv", function(error, data) {
      // Process data
@@ -168,7 +202,9 @@ path {
      // How far away circles are in legend
      var circle_spacing = 160;
 
-     var glob_legend = legend.append("g");
+     var glob_legend = legend.append("g")
+                             .on("mouseover", mouseLegendGlob)
+                             .on("mouseout", mouseLegendOut);
 
      glob_legend.append("text")
                 .attr("x", 0)
@@ -176,31 +212,35 @@ path {
                 .text("Global Mean");
 
      glob_legend.append("circle")
-                .attr("class", "glob-legend")
+                .attr("class", "glob-legend legend")
                 .attr("cx", circle_spacing)
                 .attr("cy", -4)
                 .attr("r", 6);
 
      var shem_legend = legend.append("g")
-                             .attr("transform", "translate(0,14)");
+                             .attr("transform", "translate(0,14)")
+                             .on("mouseover", mouseLegendSHem)
+                             .on("mouseout", mouseLegendOut);
 
      shem_legend.append("text")
                 .text("Southern Hemisphere Mean");
 
      shem_legend.append("circle")
-                .attr("class", "shem-legend")
+                .attr("class", "shem-legend legend")
                 .attr("cx", circle_spacing)
                 .attr("cy", -4)
                 .attr("r", 6);
 
      var nhem_legend = legend.append("g")
-                             .attr("transform", "translate(0,28)");
+                             .attr("transform", "translate(0,28)")
+                             .on("mouseover", mouseLegendNHem)
+                             .on("mouseout", mouseLegendOut);
 
      nhem_legend.append("text")
            .text("Northern Hemisphere Mean");
 
      nhem_legend.append("circle")
-                .attr("class", "nhem-legend")
+                .attr("class", "nhem-legend legend")
                 .attr("cx", circle_spacing)
                 .attr("cy", -4)
                 .attr("r", 6);
